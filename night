@@ -1,0 +1,21 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Night PvP", "DarkTheme")
+
+local PvPTab = Window:NewTab("PvP")
+local Section = PvPTab:NewSection("PvP Stuff")
+
+Section:NewButton("Esp", "Gives you Esp", function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/XErS9vqE"))()
+end)
+
+Section:NewButton("Tracher", "Gives you tracher", function()
+   
+end)
+
+Section:NewButton("ButtonText", "", function()
+  
+end)
+
+Section:NewButton("ButtonText", "ButtonInfo", function()
+   
+end)
