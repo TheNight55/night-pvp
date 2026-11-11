@@ -54,6 +54,22 @@ main,.hero,.foot,.rail{position:relative;z-index:1}
 [data-motion=off] .down span{animation:none}
 @media (max-width:760px){.warn,.hero-foot .hint{display:none}.hero-foot{flex-direction:column;align-items:flex-start}}
 
+/* stare mode */
+.hero>.dare,.hero>.stare-hud,.hero>.after{mix-blend-mode:normal;color:var(--ink);position:absolute;z-index:3}
+.hero>.dare{left:50%;bottom:1.6rem;transform:translateX(-50%);background:var(--red);border-color:var(--ink);padding:.95rem 1.4rem;font-size:12px;transition:opacity .5s}
+.hero>.dare:hover{background:var(--ink);color:var(--paper)}
+.hero>.after{left:50%;top:5.2rem;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:.6rem 1rem;font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity .6s}
+.hero.done>.after{opacity:1}
+.hero>.stare-hud{left:50%;bottom:1.6rem;transform:translateX(-50%);display:flex;align-items:center;gap:1rem;background:var(--ink);color:var(--paper);
+  padding:.55rem .6rem .55rem 1rem;font-size:12px;opacity:0;pointer-events:none;transition:opacity .5s;white-space:nowrap}
+.stare-hud .count{font:400 1.8rem/1 var(--serif);color:var(--red);min-width:2ch;text-align:right;font-variant-numeric:tabular-nums}
+.stare-hud .btn{color:var(--paper)}
+.hero.staring>.stare-hud{opacity:1;pointer-events:auto}
+.hero.staring>.dare{opacity:0;pointer-events:none}
+.hero.staring .topbar,.hero.staring h1,.hero.staring .hero-foot{opacity:0;pointer-events:none}
+.topbar,.hero h1,.hero-foot{transition:opacity .7s}
+@media (max-width:760px){.hero>.dare{top:5rem;bottom:auto;left:var(--gut);transform:none}.hero>.stare-hud{flex-wrap:wrap;white-space:normal;width:calc(100% - 2*var(--gut));justify-content:space-between}}
+
 /* ---------- ui bits ---------- */
 .btn{background:none;border:1px solid currentColor;padding:.6rem .95rem;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
   transition:background .18s,color .18s,border-color .18s;line-height:1.2;border-radius:0}

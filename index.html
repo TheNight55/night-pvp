@@ -34,13 +34,19 @@
   <canvas id="hero-canvas" aria-hidden="true"></canvas>
   <div class="topbar">
     <span class="wordmark">Plates of Doubt</span>
-    <span class="warn">Contains motion &amp; flicker</span>
+    <span class="warn">Intense motion · no flashing</span>
     <button class="btn ghost" id="motion" aria-pressed="false">Motion: on</button>
   </div>
   <h1>Seeing<br><i>is</i> negotiable.</h1>
+  <button class="btn dare" id="stare-go" aria-pressed="false">Dare — stare 20 s</button>
+  <p class="after" id="stare-after">Now look at the headline. Is it still?</p>
+  <div class="stare-hud" aria-live="polite">
+    <span class="count" id="stare-count">20</span>
+    <span class="msg">Eyes on the red dot. Don't follow the arms.</span>
+    <button class="btn ghost" id="stare-quit">I've had enough</button>
+  </div>
   <div class="hero-foot">
     <p>Nine experiments on the one organ<br>you were never meant to question.</p>
-    <p class="hint">Move your cursor. The pattern under it is not what you think it is.</p>
     <a href="#p1" class="down">Begin <span aria-hidden="true">↓</span></a>
   </div>
 </header>

@@ -138,12 +138,22 @@ const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a
 })();
 
 /* ------------------------------------------------------------------
-   Hero — three concentric ring gratings beating against each other
+   Hero — full-screen WebGL2 tunnel with an opt-in 20 s stare.
+   No flashing: only smooth motion, so it stays clear of strobe limits.
+   Falls back to a canvas moiré where WebGL2 is missing.
 ------------------------------------------------------------------ */
 (function hero() {
-  const cv = $('#hero-canvas');
+  const cv = $('#hero-canvas'), heroEl = $('.hero');
+  let ok = false;
+  try { ok = !!document.createElement('canvas').getContext('webgl2'); } catch (e) { /* no webgl */ }
+  if (ok) vortex(cv, heroEl); else { moire(cv, heroEl); $('#stare-go').hidden = true; }
+})();
+
+/* ------------------------------------------------------------------
+   Hero — three concentric ring gratings beating against each other
+------------------------------------------------------------------ */
+function moire(cv, hero) {
   const p = { x: 0, y: 0, tx: 0, ty: 0, active: false, init: false };
-  const hero = $('.hero');
   hero.addEventListener('pointermove', e => { const q = local(e, cv); p.tx = q.x; p.ty = q.y; p.active = true; }, { passive: true });
   hero.addEventListener('pointerleave', () => { p.active = false; });
 
@@ -169,7 +179,115 @@ const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a
     ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(255,61,30,.8)';
     rings(ctx, (ax + p.x) / 2, (ay + p.y) / 2, 15.35, maxR);
   }, { animated: true });
-})();
+}
+
+
+function vortex(cv, heroEl) {
+  const gl = cv.getContext('webgl2', { antialias: false, alpha: false, powerPreference: 'high-performance' });
+  const VS = `#version 300 es
+in vec2 a; void main(){ gl_Position = vec4(a, 0., 1.); }`;
+  const FS = `#version 300 es
+precision highp float;
+uniform vec2 uRes, uC; uniform float uT, uI, uK, uDot;
+out vec4 o;
+float pat(vec2 p, float off, float n, float tw, float dir){
+  float r = length(p) + 1e-4, a = atan(p.y, p.x), lr = log(r);
+  float s = sin(n*a + tw*lr - dir*uT*(1.0 + .7*uI) + off);
+  float z = sin(lr*(9.0 + 8.0*uI) + dir*uT*(2.2 + 2.0*uI) + off*.6);
+  float v = s*z, w = fwidth(v)*.8 + .015;
+  return smoothstep(-w, w, v);
+}
+void main(){
+  vec2 f = gl_FragCoord.xy;
+  vec2 p = (f - uC) / uRes.y * 2.0;
+  float r = length(p), k = smoothstep(.34, .30, r);
+  vec3 outer = vec3(pat(p,0.,8.,3.4+uI,1.), pat(p,.16,8.,3.4+uI,1.), pat(p,.32,8.,3.4+uI,1.));
+  vec3 inner = vec3(pat(p,0.,5.,-2.4,-1.), pat(p,.16,5.,-2.4,-1.), pat(p,.32,5.,-2.4,-1.));
+  vec3 ink = vec3(.055,.055,.047), paper = vec3(.93,.905,.86), flat_ = vec3(.80,.77,.71);
+  vec3 col = mix(ink, paper, mix(outer, inner, k));
+  col = mix(flat_, col, uK);
+  col *= 1.0 - .22*smoothstep(.9, 2.0, length((f - .5*uRes)/uRes.y*2.0));
+  float d = length(f - uC);
+  col = mix(col, vec3(1., .24, .12), (1.0 - smoothstep(uDot - 1.5, uDot + 1.5, d)) * step(.5, uDot));
+  o = vec4(col, 1.);
+}`;
+  const sh = (t, src) => { const s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+  const pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { moire(cv, heroEl); return; }
+  gl.useProgram(pr);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = n => gl.getUniformLocation(pr, n);
+  const uRes = U('uRes'), uC = U('uC'), uT = U('uT'), uI = U('uI'), uK = U('uK'), uDot = U('uDot');
+
+  const STARE = 20;
+  let W = 1, H = 1, dpr = 1, t = 0, I = 0, K = .55, spd = 1, mode = 'idle', el = 0;
+  let c = { x: 0, y: 0, tx: 0, ty: 0, active: false, init: false };
+  let vis = false, raf = 0, last = 0;
+  const count = $('#stare-count'), go = $('#stare-go'), after = $('#stare-after');
+
+  function resize() {
+    const r = cv.getBoundingClientRect(); if (!r.width) return;
+    dpr = Math.min(devicePixelRatio || 1, 1.5);
+    W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    gl.viewport(0, 0, cv.width, cv.height); kick();
+  }
+  function setMode(m) {
+    mode = m; heroEl.classList.toggle('staring', m === 'stare'); heroEl.classList.toggle('done', m === 'done');
+    go.textContent = m === 'idle' ? 'Dare — stare 20 s' : m === 'done' ? 'Again' : 'Stop';
+    go.setAttribute('aria-pressed', m === 'stare');
+  }
+  function update(dt) {
+    const tgt = mode === 'stare' ? [W / 2, H / 2] : [c.tx, c.ty];
+    if (mode !== 'stare' && !c.active) { tgt[0] = W * (.5 + .22 * Math.sin(t * .13)); tgt[1] = H * (.5 + .18 * Math.sin(t * .19 + 1)); }
+    if (!c.init) { c.x = tgt[0]; c.y = tgt[1]; c.init = true; }
+    const kk = 1 - Math.exp(-dt * (mode === 'stare' ? 6 : 2.6));
+    c.x += (tgt[0] - c.x) * kk; c.y += (tgt[1] - c.y) * kk;
+    if (mode === 'stare') {
+      el += dt; const f = Math.min(1, el / STARE);
+      I = f * f * (3 - 2 * f); K += (1 - K) * (1 - Math.exp(-dt * 1.5)); spd = 1 + 1.1 * f;
+      count.textContent = Math.max(0, Math.ceil(STARE - el));
+      if (el >= STARE) { setMode('done'); }
+    } else if (mode === 'done') {
+      spd += (0 - spd) * (1 - Math.exp(-dt * 5)); if (spd < .003) spd = 0; K = 1;
+    } else {
+      const e = 1 - Math.exp(-dt * 2); I += (0 - I) * e; K += (.55 - K) * e; spd += (1 - spd) * e;
+    }
+    t += dt * spd;
+  }
+  function draw() {
+    gl.uniform2f(uRes, cv.width, cv.height);
+    gl.uniform2f(uC, c.x * dpr, (H - c.y) * dpr);
+    gl.uniform1f(uT, t); gl.uniform1f(uI, I); gl.uniform1f(uK, K);
+    gl.uniform1f(uDot, mode === 'idle' ? 0 : Math.max(5, H * .012) * dpr);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  function frame(now) {
+    raf = 0; if (!vis) return;
+    const dt = Math.min(.05, (now - last) / 1000 || 0); last = now;
+    const run = !state.paused;
+    if (run) update(dt); else if (!c.init) update(0);
+    draw();
+    if (run) raf = requestAnimationFrame(frame);
+  }
+  function kick() { if (vis && !raf) raf = requestAnimationFrame(frame); }
+
+  go.addEventListener('click', () => {
+    if (mode === 'stare') { setMode('idle'); return; }
+    if (state.paused) window.setMotion(false);   // the visitor asked for it explicitly
+    el = 0; setMode('stare'); count.textContent = STARE; kick();
+  });
+  $('#stare-quit').addEventListener('click', () => setMode('idle'));
+  addEventListener('keydown', e => { if (e.key === 'Escape' && mode === 'stare') setMode('idle'); });
+  heroEl.addEventListener('pointermove', e => { const q = local(e, cv); c.tx = q.x; c.ty = q.y; c.active = true; }, { passive: true });
+  heroEl.addEventListener('pointerleave', () => { c.active = false; });
+  new ResizeObserver(resize).observe(cv);
+  new IntersectionObserver(es => { vis = es[0].isIntersecting; if (vis) { last = performance.now(); kick(); } else if (mode === 'stare') setMode('idle'); }).observe(cv);
+  addEventListener('motionchange', () => { last = performance.now(); kick(); });
+  setMode('idle');
+}
 
 /* ------------------------------------------------------------------
    I — Rotating snakes
