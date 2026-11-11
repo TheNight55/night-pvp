@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plates of Doubt — nine experiments on your eyes</title>
+<meta name="description" content="Nine interactive optical illusions. Each one runs live in your browser, and each one can be taken apart.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-motion="on">
+
+<div class="reticle" aria-hidden="true"></div>
+
+<nav class="rail" aria-label="Plates">
+  <a href="#top" class="rail-mark">PoD</a>
+  <ol>
+    <li><a href="#p1" data-n="I">I</a></li>
+    <li><a href="#p2" data-n="II">II</a></li>
+    <li><a href="#p3" data-n="III">III</a></li>
+    <li><a href="#p4" data-n="IV">IV</a></li>
+    <li><a href="#p5" data-n="V">V</a></li>
+    <li><a href="#p6" data-n="VI">VI</a></li>
+    <li><a href="#p7" data-n="VII">VII</a></li>
+    <li><a href="#p8" data-n="VIII">VIII</a></li>
+    <li><a href="#p9" data-n="IX">IX</a></li>
+  </ol>
+  <div class="rail-prog"><i></i></div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="topbar">
+    <span class="wordmark">Plates of Doubt</span>
+    <span class="warn">Contains motion &amp; flicker</span>
+    <button class="btn ghost" id="motion" aria-pressed="false">Motion: on</button>
+  </div>
+  <h1>Seeing<br><i>is</i> negotiable.</h1>
+  <div class="hero-foot">
+    <p>Nine experiments on the one organ<br>you were never meant to question.</p>
+    <p class="hint">Move your cursor. The pattern under it is not what you think it is.</p>
+    <a href="#p1" class="down">Begin <span aria-hidden="true">↓</span></a>
+  </div>
+</header>
+
+<main>
+
+<div class="band" aria-hidden="true"></div>
+
+<!-- I -->
+<section class="plate" id="p1">
+  <header class="plate-head">
+    <span class="num">I</span>
+    <div><p class="kicker">Peripheral drift</p><h2>Rotating <em>snakes</em></h2></div>
+  </header>
+  <div class="plate-body">
+    <figure class="stage" style="--ar:16/10;--ar-m:4/5;--bg:#c9c3b4">
+      <canvas id="snakes" aria-label="Six discs of coloured rings that appear to rotate"></canvas>
+      <figcaption><span>Fig. 01 — static image</span><span id="snakes-read">6 discs · 0 desaturated</span></figcaption>
+    </figure>
+    <aside class="notes rv">
+      <p>Nothing here rotates. Each ring is a fixed run of four tones — black, blue, white, yellow — always in the same order. Your visual system reads that luminance ramp as motion, and every tiny eye movement feeds it.</p>
+      <p>Look beside a disc, not at it. The ones in the corner of your vision move the most.</p>
+      <div class="ctrl"><button class="btn" id="snakes-reset">Restore colour</button></div>
+      <p class="aside">Click a disc to drain its colour. The motion dies with it, because the effect needs the specific luminance steps, not the hue.</p>
+    </aside>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true"></div>
+
+<!-- II -->
+<section class="plate dark" id="p2">
+  <header class="plate-head">
+    <span class="num">II</span>
+    <div><p class="kicker">Motion adaptation</p><h2>The <em>waterfall</em> that stops</h2></div>
+  </header>
+  <div class="plate-body">
+    <figure class="stage animated" style="--ar:1/1;--ar-m:1/1;--bg:#161613;max-width:min(100%,640px)">
+      <canvas id="spiral" aria-label="A rotating spiral"></canvas>
+      <figcaption><span>Fig. 02 — live</span><span id="spiral-read">idle</span></figcaption>
+    </figure>
+    <aside class="notes rv">
+      <p>Neurons that detect expansion get tired. Stare at the centre of the spiral for twenty seconds and they stop answering. When it halts, their quiet opposites win the argument — and a motionless picture appears to crawl backwards.</p>
+      <p>Keep your eyes on the dot. Do not follow the arms.</p>
+      <div class="ctrl"><label for="spiral-speed"><span>Speed</span><output id="spiral-speed-o">2.2</output></label>
+        <input type="range" id="spiral-speed" min="0.4" max="5" step="0.1" value="2.2"></div>
+      <div class="row">
+        <button class="btn" id="spiral-stare">Stare — 20 s</button>
+        <button class="btn" id="spiral-flip">Reverse</button>
+      </div>
+      <p class="aside">When it freezes, look at this paragraph.</p>
+    </aside>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true"></div>
+
+<!-- III -->
+<section class="plate" id="p3">
+  <header class="plate-head">
+    <span class="num">III</span>
+    <div><p class="kicker">Café wall</p><h2>Parallel, <em>every</em> line</h2></div>
+  </header>
+  <div class="plate-body">
+    <figure class="stage" style="--ar:16/10;--ar-m:4/5;--bg:#8a867c">
+      <canvas id="cafe" aria-label="Tiles whose mortar lines look tilted"></canvas>
+      <figcaption><span>Fig. 03 — static image</span><span id="cafe-read">offset 0.50 tile</span></figcaption>
+    </figure>
+    <aside class="notes rv">
+      <p>The grey lines are perfectly horizontal and perfectly parallel. Offset the rows by half a tile, put high-contrast tiles against a mid-grey seam, and the lines buckle into wedges.</p>
+      <div class="ctrl"><label for="cafe-shift"><span>Row offset</span><output id="cafe-shift-o">0.50</output></label>
+        <input type="range" id="cafe-shift" min="0" max="1" step="0.01" value="0.5"></div>
+      <div class="ctrl"><label for="cafe-mortar"><span>Seam</span><output id="cafe-mortar-o">4 px</output></label>
+        <input type="range" id="cafe-mortar" min="1" max="10" step="1" value="4"></div>
+      <div class="row"><button class="btn" id="cafe-ruler" aria-pressed="false">Show the truth</button></div>
+      <p class="aside">Drag the offset to a full tile. The pattern becomes an ordinary chessboard and the tilt disappears.</p>
+    </aside>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true"></div>
+
+<!-- IV -->
+<section class="plate dark" id="p4">
+  <header class="plate-head">
+    <span class="num">IV</span>
+    <div><p class="kicker">Lateral inhibition</p><h2>Dots that <em>aren't</em></h2></div>
+  </header>
+  <div class="plate-body">
+    <figure class="stage" style="--ar:16/10;--ar-m:4/5;--bg:#000">
+      <canvas id="grid" aria-label="A grid with dark dots that appear at the intersections"></canvas>
+      <figcaption><span>Fig. 04 — static image</span><span id="grid-read">scintillating</span></figcaption>
+    </figure>
+    <aside class="notes rv">
+      <p>There are no dark spots anywhere on this grid. Retinal cells compare each point with its surroundings; at an intersection, more of the surround is bright, so the centre is judged darker than the streets.</p>
+      <p>In the scintillating version the dots flash as your gaze jumps — and refuse to appear wherever you look directly.</p>
+      <div class="seg" role="group" aria-label="Mode">
+        <button class="btn" data-mode="scint" aria-pressed="true">Scintillating</button>
+        <button class="btn" data-mode="herm" aria-pressed="false">Hermann</button>
+      </div>
+      <div class="ctrl"><label for="grid-size"><span>Cell</span><output id="grid-size-o">56</output></label>
+        <input type="range" id="grid-size" min="30" max="110" step="1" value="56"></div>
+      <div class="ctrl"><label for="grid-street"><span>Street</span><output id="grid-street-o">0.22</output></label>
+        <input type="range" id="grid-street" min="0.08" max="0.45" step="0.01" value="0.22"></div>
+    </aside>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true"></div>
+
+<!-- V -->
+<section class="plate" id="p5">
+  <header class="plate-head">
+    <span class="num">V</span>
+    <div><p class="kicker">Lightness constancy</p><h2>A is <em>B</em></h2></div>
+  </header>
+  <div class="plate-body">
+    <figure class="stage" style="--ar:16/10;--ar-m:1/1;--bg:#d6d0c2">
+      <canvas id="checker" aria-label="A checkerboard with a cylinder shadow; squares A and B are the same grey"></canvas>
+      <figcaption><span>Fig. 05 — click a square to sample it</span><span id="checker-read">A = ?  B = ?</span></figcaption>
+    </figure>
+    <aside class="notes rv">
+      <p>Square A and square B are the same grey. Not similar — identical. Your brain knows a shadow lies across B, quietly subtracts it, and hands you a paler square than the pixels contain.</p>
+      <p>Don't take our word for it. Click A, then B, and read the real pixel values off the canvas.</p>
+      <div class="row"><button class="btn" id="checker-iso" aria-pressed="false">Isolate A &amp; B</button></div>
+    </aside>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true"></div>
+
+<!-- VI -->
+<section class="plate dark" id="p6">
+  <header class="plate-head">
+    <span class="num">VI</span>
+    <div><p class="kicker">Afterimage · Troxler fading</p><h2>Lilac <em>chaser</em></h2></div>
+  </header>
+  <div class="plate-body">
+    <figure class="stage animated" style="--ar:1/1;--ar-m:1/1;--bg:#b9b9b6;max-width:min(100%,640px)">
+      <canvas id="lilac" aria-label="Twelve pink discs, one disappearing at a time, around a cross"></canvas>
+      <figcaption><span>Fig. 06 — live</span><span id="lilac-read">10 steps / s</span></figcaption>
+    </figure>
+    <aside class="notes rv">
+      <p>Fixate the cross and don't move your eyes. A gap runs around the ring — then a green disc appears in it, then the pink vanishes entirely and only the green disc keeps circling.</p>
+      <p>The green is an afterimage, the complement of the pink. The vanishing is your visual system discarding anything that holds still in the periphery. Neither exists on screen.</p>
+      <div class="ctrl"><label for="lilac-speed"><span>Pace</span><output id="lilac-speed-o">10</output></label>
+        <input type="range" id="lilac-speed" min="3" max="20" step="1" value="10"></div>
+      <div class="row">
+        <button class="btn" id="lilac-dir">Reverse</button>
+        <button class="btn" id="lilac-gap" aria-pressed="true">Gap: on</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true"></div>
+
+<!-- VII -->
+<section class="plate" id="p7">
+  <header class="plate-head">
+    <span class="num">VII</span>
+    <div><p class="kicker">Illusory contours</p><h2>The triangle <em>nobody</em> drew</h2></div>
+  </header>
+  <div class="plate-body">
+    <figure class="stage" style="--ar:16/10;--ar-m:1/1;--bg:#ece7dc">
+      <canvas id="kanizsa" aria-label="Three notched circles and three angles that suggest two triangles"></canvas>
+      <figcaption><span>Fig. 07 — after Kanizsa, 1955</span><span id="kanizsa-read">notch 100 %</span></figcaption>
+    </figure>
+    <aside class="notes rv">
+      <p>Three notched discs and three open angles. Your brain refuses to believe that is a coincidence, invents a white triangle lying on top, paints it brighter than the page, and draws crisp edges where there is no ink.</p>
+      <div class="ctrl"><label for="kz-open"><span>Close the notches</span><output id="kz-open-o">100</output></label>
+        <input type="range" id="kz-open" min="0" max="1" step="0.01" value="1"></div>
+      <div class="row">
+        <button class="btn" id="kz-breathe" aria-pressed="false">Breathe</button>
+        <button class="btn" id="kz-edge" aria-pressed="false">Show the edge</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true"></div>
+
+<!-- VIII -->
+<section class="plate dark" id="p8">
+  <header class="plate-head">
+    <span class="num">VIII</span>
+    <div><p class="kicker">Depth misjudgement</p><h2>Shepard's <em>tables</em></h2></div>
+  </header>
+  <div class="plate-body">
+    <figure class="stage" style="--ar:16/10;--ar-m:4/5;--bg:#1d1b17">
+      <canvas id="shepard" aria-label="Two tables whose identical tops look different"></canvas>
+      <figcaption><span>Fig. 08 — after Roger Shepard, 1990</span><span id="shepard-read">right top rotated 90°</span></figcaption>
+    </figure>
+    <aside class="notes rv">
+      <p>The two tabletops are the same parallelogram — one is simply the other turned by ninety degrees. But the legs tell your brain that the left one recedes into depth, so it stretches it into a long, narrow plank.</p>
+      <div class="ctrl"><label for="sh-rot"><span>Turn the right top</span><output id="sh-rot-o">0°</output></label>
+        <input type="range" id="sh-rot" min="0" max="90" step="1" value="0"></div>
+      <div class="row"><button class="btn" id="sh-ghost" aria-pressed="false">Overlay the left top</button></div>
+    </aside>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true"></div>
+
+<!-- IX -->
+<section class="plate" id="p9">
+  <header class="plate-head">
+    <span class="num">IX</span>
+    <div><p class="kicker">Ambiguity</p><h2>The cube with <em>no</em> front</h2></div>
+  </header>
+  <div class="plate-body">
+    <figure class="stage animated" style="--ar:16/10;--ar-m:1/1;--bg:#0e0e0c;cursor:grab">
+      <canvas id="necker" aria-label="A rotating wireframe cube whose direction flips"></canvas>
+      <figcaption><span>Fig. 09 — drag to turn it</span><span id="necker-read">depth cue 0.00</span></figcaption>
+    </figure>
+    <aside class="notes rv">
+      <p>A wireframe has no near side. Every edge is the same weight, so the geometry fits two equally good interpretations — and your brain swaps between them every few seconds, reversing the direction of rotation with no input from you.</p>
+      <p>Add a depth cue and one reading wins permanently. Thicker lines are nearer.</p>
+      <div class="ctrl"><label for="nk-depth"><span>Depth cue</span><output id="nk-depth-o">0.00</output></label>
+        <input type="range" id="nk-depth" min="0" max="1" step="0.01" value="0"></div>
+    </aside>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="band" aria-hidden="true"></div>
+  <div class="foot-in">
+    <p class="big">Your eyes are<br>an <i>opinion.</i></p>
+    <p>Plain HTML, CSS and canvas. No libraries, no images — every plate is drawn at runtime. If anything made you dizzy, look at something far away for a minute and breathe.</p>
+  </div>
+</footer>
+
+<noscript><p style="padding:2rem">These illusions are drawn with JavaScript. Please enable it.</p></noscript>
+<script src="app.js"></script>
+</body>
+</html>
